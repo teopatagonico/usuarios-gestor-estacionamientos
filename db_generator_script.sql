@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`usuarios` (
   UNIQUE INDEX `dni_UNIQUE` (`dni` ASC) VISIBLE,
   PRIMARY KEY (`dni`),
   CONSTRAINT `fk_membresia`
-    FOREIGN KEY ()
-    REFERENCES `mydb`.`membresia` ()
+    FOREIGN KEY (`id_membresia`)
+    REFERENCES `mydb`.`membresia` (`id_membresia`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
