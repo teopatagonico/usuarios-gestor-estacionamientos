@@ -68,7 +68,7 @@ def renovarMembresia(conn, cursor, dni, duracion):
     
     tiempo = duracion
     while tiempo >= 12:
-        año_= año + 1
+        año = año + 1
         tiempo = tiempo - 12
     
     mes = mes + tiempo
@@ -82,6 +82,14 @@ def renovarMembresia(conn, cursor, dni, duracion):
 
     sql = f"""UPDATE usuarios SET vencimiento_membresia='{vencimiento}' WHERE dni={dni}"""
     
+    cursor.execute(sql)
+    conn.commit()
+
+    return 0
+
+def removerMembresia(conn, cursor, dni):
+    sql = f"UPDATE usuarios SET id_membresia = NULL, vencimiento_membresia = NULL WHERE dni={dni}"
+
     cursor.execute(sql)
     conn.commit()
 
