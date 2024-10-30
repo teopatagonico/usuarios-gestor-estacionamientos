@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   vencimiento_membresia DATE NULL,
   CONSTRAINT fk_membresia
     FOREIGN KEY (id_membresia)
-      REFERENCES mydb.membresia (id_membresia)
+      REFERENCES membresia (id_membresia)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION)
 -----
@@ -21,6 +21,6 @@ CREATE TABLE IF NOT EXISTS estacionamientos (
   id_ocupante INT NULL,
   CONSTRAINT fk_ocupantes
     FOREIGN KEY (id_ocupante)
-      REFERENCES mydb.usuarios (dni)
+      REFERENCES usuarios (dni)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION)
