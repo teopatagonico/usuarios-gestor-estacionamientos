@@ -4,7 +4,7 @@ import sqlite3
 db_path = 'bdd_usuarios_membresias.db'
 
 # Nombre del script de SQL
-sql_script_path = './db_generator_script.sql'
+sql_script_path = './src/bdd/db_generator_script.sql'
 
 # Conectar a la BDD (si no existe es creada)
 conn = sqlite3.connect(db_path)
