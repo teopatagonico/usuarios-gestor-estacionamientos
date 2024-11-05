@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS membresia (
+CREATE TABLE IF NOT EXISTS membresias (
   id_membresia INT NOT NULL PRIMARY KEY,
   nombre VARCHAR(45) NOT NULL)
 -----
