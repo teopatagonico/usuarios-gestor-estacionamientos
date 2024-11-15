@@ -5,8 +5,6 @@ try:
     import membresias as membresias
 except ImportError:
     import modules.membresias as membresias
-except ImportError:
-    import modules_new.membresias as membresias
 
 campos = ["DNI", "Nombre", "Dirección", "Teléfono", "Correo", "Membresía", "Vencimiento"]
 
