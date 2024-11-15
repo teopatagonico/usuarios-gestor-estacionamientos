@@ -3,13 +3,23 @@ from tkinter.constants import *
 import modules.usuarios as usuarios
 
 def actualizarCampos(cursor, dni, marco):
-    tkinter.Entry().get()
-    hijos = marco.children.copy()
+    hijos = list(marco.children.copy())
     resultado = usuarios.consultaUsuario(cursor, dni)
     
     if resultado != "Usuario inexistente":
-        for hijo in hijos:
-            if isinstance(marco.children[hijo], tkinter.Entry):
+        resultado = resultado.split("\n")[:-1]
+        texto_campos = []
+        for campo in resultado:
+            texto_campos.append(campo.split(": ")[1])
+
+        indice = 0
+        for i in range(2, len(hijos)):
+            nombre_hijo = hijos[i]
+            hijo = marco.children[nombre_hijo]
+            if isinstance(hijo, tkinter.Entry):
+                mensaje = hijo.cget("textvariable")
+                hijo.setvar(mensaje, texto_campos[indice])
+                indice = indice + 1
 
 
 def altaUsuario(conn, cursor, dni, nombre, direccion, telefono, correo):
@@ -30,9 +40,10 @@ def altaUsuario(conn, cursor, dni, nombre, direccion, telefono, correo):
     mensaje.pack()
 
 def consultaUsuario(cursor, dni, marco):
-    hijos = marco.children.copy()
-    for hijo in hijos:
-        hijos[hijo].destroy()
+    hijos = list(marco.children.copy())
+    for i in range(7, len(hijos)):
+        hijo = hijos[i]
+        marco.children[hijo].destroy()
 
     resultado = usuarios.consultaUsuario(cursor, dni)
     if resultado != "Usuario inexistente":
@@ -151,9 +162,6 @@ def consultaUsr(cursor):
         texto.configure(text=f"{textos[i]}")
         texto.grid_configure(column=i, row=0)
 
-    marco_resultados = tkinter.Frame(marco_lista)
-    marco_resultados.grid_configure(column=0, row=1, columnspan=7)
-
     texto = tkinter.Label(marco_entrada)
     texto.configure(text="DNI: ")
     texto.grid_configure(column=0, row=0)
@@ -167,11 +175,11 @@ def consultaUsr(cursor):
 
     boton = tkinter.Button(marco_entrada)
     boton.configure(text="Consultar", command= lambda: consultaUsuario(cursor, int(entrada.get()),
-                                                                       marco_resultados))
+                                                                       marco_lista))
     boton.grid_configure(column=3, row=0)
 
 def modificarUsr(conn, cursor):
-    textos = [["DNI viejo", "DNI nuevo"], ["Nombre", "Dirección"], ["Teléfono", "Correo"]]
+    textos = ["DNI viejo", "DNI nuevo", "Nombre", "Dirección", "Teléfono", "Correo"]
     campos = {}
 
     ventana = tkinter.Tk()
@@ -186,17 +194,20 @@ def modificarUsr(conn, cursor):
     marco_entradas = tkinter.Frame(marco_principal)
     marco_entradas.pack()
 
+    indice = 0
     for i in range(3):
         for j in range(0, 5, 2):
             if j != 2:
+                mensaje = f"{textos[indice]}"
                 texto = tkinter.Label(marco_entradas)
-                texto.configure(text=f"{textos[i][int(j>0)]}: ")
+                texto.configure(text=f"{mensaje}: ")
                 texto.grid_configure(column=j, row=i)
 
-                entrada = tkinter.Entry(marco_entradas)
+                entrada = tkinter.Entry(marco_entradas, textvariable=tkinter.StringVar())
                 entrada.grid_configure(column=j+1, row=i)
 
-                campos[textos[i][int(j>0)]] = entrada
+                campos[mensaje] = entrada
+                indice = indice + 1
             else:
                 separador = tkinter.Label(marco_entradas)
                 separador.configure(width=10)
@@ -207,8 +218,10 @@ def modificarUsr(conn, cursor):
     boton.grid_configure(column=0, row=3)
 
     boton = tkinter.Button(marco_entradas)
-    boton.configure(text="Buscar datos", command= lambda: actualizarCampos(cursor,
-                                                  int(campos["DNI viejo"].get()), marco_entradas))
+    boton.configure(text="Buscar datos", command=
+                    lambda: actualizarCampos(cursor,
+                                             int(campos["DNI viejo"].getvar(campos["DNI viejo"].cget("textvariable"))),
+                                             marco_entradas))
     boton.grid_configure(column=2, row=3)
 
     boton = tkinter.Button(marco_entradas)
