@@ -8,8 +8,8 @@ except ImportError:
 
 campos = ["DNI", "Nombre", "Dirección", "Teléfono", "Correo", "Membresía", "Vencimiento"]
 
-def numeroValido(dni):
-    return dni > 0
+def numeroValido(numero):
+    return numero > 0 and len(str(numero)) <=8
 
 def telefonoValido(telefono):
     return len(telefono) == 14 and telefono[0:4] == "+549"
@@ -57,7 +57,18 @@ def parametrosAltaValidos(dni, nombre, direccion, telefono, correo):
     telefono_valido = parametroValido(telefono, "telefono")
     correo_valido = parametroValido(correo, "correo")
 
-    parametros_validos = dni_valido and nombre_valido and direccion_valida and telefono_valido and correo_valido
+    if not dni_valido:
+        parametros_validos = 1
+    elif not nombre_valido:
+        parametros_validos = 2
+    elif not direccion_valida:
+        parametros_validos = 3
+    elif not telefono_valido:
+        parametros_validos = 4
+    elif not correo_valido:
+        parametros_validos = 5
+    else:
+        parametros_validos = 0
     
     return parametros_validos
 
@@ -70,7 +81,11 @@ def existeUsuario(cursor, dni):
     for linea in cursor:
         resultado = resultado + str(linea)
 
-    existe = resultado != ""
+    if resultado != "":
+        existe = 0
+
+    else:
+        existe = 1
 
     return existe
 
@@ -99,24 +114,21 @@ def inicializar(ruta):
 
 def altaUsuario(conn, cursor, dni, nombre, direccion, telefono, correo):
 
-    if parametrosAltaValidos(dni, nombre, direccion, telefono, correo):
+    resultado = parametrosAltaValidos(dni, nombre, direccion, telefono, correo)
+
+    if resultado == 0:
         sql = f"""INSERT INTO usuarios VALUES
                 ({dni}, '{nombre}', '{direccion}', '{telefono}', '{correo}',
                 NULL, NULL)"""
         
         cursor.execute(sql)
         conn.commit()
-        
-        resultado = 0
-
-    else:
-        resultado = 1
     
     return resultado
 
 def bajaUsuario(conn, cursor, dni):
     
-    if existeUsuario(cursor, dni):    
+    if existeUsuario(cursor, dni) == 0:    
         sql = f"""DELETE FROM usuarios WHERE dni={dni}"""
 
         cursor.execute(sql)
@@ -131,24 +143,28 @@ def bajaUsuario(conn, cursor, dni):
 
 def modificarUsuario(conn, cursor, dni_viejo, dni_nuevo, nombre, direccion, telefono, correo):
     
-    if existeUsuario(cursor, dni_viejo) and parametrosAltaValidos(dni_nuevo, nombre, direccion, telefono, correo):
-        sql = f"""UPDATE usuarios SET dni={dni_nuevo}, nombre='{nombre}',
-                direccion='{direccion}', telefono='{telefono}', correo='{correo}',
-                id_membresia=NULL, vencimiento_membresia=NULL WHERE dni={dni_viejo}"""
-        
-        cursor.execute(sql)
-        conn.commit()
+    resultado = existeUsuario(cursor, dni_viejo)
 
-        resultado = 0
+    if resultado == 0:
+        resultado = parametrosAltaValidos(dni_nuevo, nombre, direccion, telefono, correo)
 
-    else:
-        resultado = 1
-    
+        if resultado == 0:
+
+            sql = f"""UPDATE usuarios SET dni={dni_nuevo}, nombre='{nombre}',
+                    direccion='{direccion}', telefono='{telefono}', correo='{correo}',
+                    id_membresia=NULL, vencimiento_membresia=NULL WHERE dni={dni_viejo}"""
+            
+            cursor.execute(sql)
+            conn.commit()
+
+        else:
+            resultado = resultado + 1
+   
     return resultado
 
 def consultaUsuario(cursor, dni):
 
-    if existeUsuario(cursor, dni):
+    if existeUsuario(cursor, dni) == 0:
         sql = f"""SELECT * FROM usuarios WHERE dni={dni}"""
 
         cursor.execute(sql)
@@ -165,18 +181,18 @@ def consultaUsuario(cursor, dni):
 
 def anadirMembresia(conn, cursor, dni, id_membresia, duracion):
 
-    if existeUsuario(cursor, dni) and membresias.existeMembresia(cursor, id_membresia):
-        sql = f"""UPDATE usuarios SET id_membresia={id_membresia} WHERE dni={dni}"""
+    resultado = existeUsuario(cursor, dni)
+
+    if resultado == 0:
+        resultado = membresias.existeMembresia(cursor, id_membresia)
         
-        cursor.execute(sql)
-        conn.commit()
+        if resultado:
+            sql = f"""UPDATE usuarios SET id_membresia={id_membresia} WHERE dni={dni}"""
+            
+            cursor.execute(sql)
+            conn.commit()
 
-        renovarMembresia(conn, cursor, dni, duracion)
-
-        resultado = 0
-
-    else:
-        resultado = 1
+            renovarMembresia(conn, cursor, dni, duracion)
     
     return resultado
 

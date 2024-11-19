@@ -34,8 +34,16 @@ def altaUsuario(conn, cursor, dni, nombre, direccion, telefono, correo):
 
     if resultado == 0:
         mensaje.configure(text="¡Usuario cargado con éxito!")
-    else:
-        mensaje.configure(text="Ha habido un error en la carga.")
+    elif resultado == 1:
+        mensaje.configure(text="DNI inválido. Debe ser un número positivo con 8 dígitos como mucho.")
+    elif resultado == 2:
+        mensaje.configure(text="Nombre vacío. Por favor, ingrese un nombre.")
+    elif resultado == 3:
+        mensaje.configure(text="Dirección vacía. Por favor, ingrese una dirección.")
+    elif resultado == 4:
+        mensaje.configure(text="Teléfono inválido. Debe ser un teléfono de Argentina incluyendo el + y el 9.\nEjemplo: +5492944112233")
+    elif resultado == 5:
+        mensaje.configure(text="Correo inválido. Debe ser del tipo usuario@ejemplo.com.")
 
     mensaje.pack()
 
@@ -60,7 +68,7 @@ def consultaUsuario(cursor, dni, marco):
     else:
         texto = tkinter.Label(marco)
         texto.configure(text=f"{resultado}")
-        texto.pack()
+        texto.grid_configure(column=0, row=1, columnspan=7)
 
 def modificarUsuario(conn, cursor, dni_viejo, dni_nuevo, nombre, direccion, telefono, correo):
     resultado = usuarios.modificarUsuario(conn, cursor, dni_viejo, dni_nuevo, nombre, direccion, telefono, correo)
@@ -74,8 +82,18 @@ def modificarUsuario(conn, cursor, dni_viejo, dni_nuevo, nombre, direccion, tele
 
     if resultado == 0:
         mensaje.configure(text="¡Usuario actualizado con éxito!")
-    else:
-        mensaje.configure(text=f"El usuario con DNI {dni_viejo} no existe.")    
+    elif resultado == 1:
+        mensaje.configure(text=f"El usuario con DNI {dni_viejo} no existe.")
+    elif resultado == 2:
+        mensaje.configure(text="DNI inválido. Debe ser un número positivo con 8 dígitos como mucho.")
+    elif resultado == 3:
+        mensaje.configure(text="Nombre vacío. Por favor, ingrese un nombre.")
+    elif resultado == 4:
+        mensaje.configure(text="Dirección vacía. Por favor, ingrese una dirección.")
+    elif resultado == 5:
+        mensaje.configure(text="Teléfono inválido. Debe ser un teléfono de Argentina incluyendo el + y el 9.\nEjemplo: +5492944112233")
+    elif resultado == 6:
+        mensaje.configure(text="Correo inválido. Debe ser del tipo usuario@ejemplo.com.")   
 
     mensaje.pack()
 
