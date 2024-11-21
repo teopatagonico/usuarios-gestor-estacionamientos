@@ -79,6 +79,9 @@ def modificarUsuario(conn, cursor, dni_viejo, dni_nuevo, nombre, direccion, tele
 
     mensaje.pack()
 
+
+
+
 def eliminarUsuario(conn, cursor, dni):
     resultado = usuarios.bajaUsuario(conn, cursor, dni)
 
@@ -288,6 +291,8 @@ def main(conn, cursor):
     boton_eliminar = tkinter.Button(marco_botones)
     boton_eliminar.configure(text="Eliminar usuario", command= lambda: eliminarUsr(conn, cursor))
     boton_eliminar.grid_configure(column=3, row=0)
+
+
 
     tkinter.mainloop()
 

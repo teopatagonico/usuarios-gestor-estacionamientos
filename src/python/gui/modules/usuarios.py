@@ -8,8 +8,17 @@ except ImportError:
 
 campos = ["DNI", "Nombre", "Dirección", "Teléfono", "Correo", "Membresía", "Vencimiento"]
 
-def numeroValido(dni):
-    return dni > 0
+
+def inicializar(ruta):
+
+    conn = sqlite3.connect(ruta)
+    cursor = conn.cursor()
+
+    return conn, cursor
+
+
+def numeroValido(numero):
+    return numero > 0 and len(str(numero)) <= 8
 
 def telefonoValido(telefono):
     return len(telefono) == 14 and telefono[0:4] == "+549"
@@ -90,12 +99,7 @@ def tieneMembresia(cursor, dni):
 
     return resultado
 
-def inicializar(ruta):
 
-    conn = sqlite3.connect(ruta)
-    cursor = conn.cursor()
-
-    return conn, cursor
 
 def altaUsuario(conn, cursor, dni, nombre, direccion, telefono, correo):
 
