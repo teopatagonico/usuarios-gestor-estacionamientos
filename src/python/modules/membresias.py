@@ -16,6 +16,8 @@ def parametroValido(parametro, tipo):
     else:
         valido = nombreValido(parametro)
 
+    return valido
+
 def parametrosAltaValidos(id_membresia, nombre):
 
     id_valido = parametroValido(id_membresia, "id")
@@ -46,8 +48,8 @@ def inicializar(ruta):
 def altaMembresia(conn, cursor, id_membresia, nombre):
 
     if parametrosAltaValidos(id_membresia, nombre):
-        sql = f"""INSERT INTO usuarios VALUES
-                ({id_membresia}, {nombre})"""
+        sql = f"""INSERT INTO membresias VALUES
+                ({id_membresia}, '{nombre}')"""
         
         cursor.execute(sql)
         conn.commit()
