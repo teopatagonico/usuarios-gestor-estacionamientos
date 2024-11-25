@@ -114,6 +114,9 @@ def eliminarUsuario(conn, cursor, dni):
     
     mensaje.pack()
 
+def anadirMembresiaUsuario(conn, cursor, dni, id_membresia, duracion):
+    usuarios.anadirMembresia(conn, cursor, dni, id_membresia, duracion)
+
 def anadirUsr(conn, cursor):
     textos = [["DNI", "Nombre"], ["Dirección", "Teléfono"], ["Correo", None]]
     campos = {}
@@ -278,6 +281,59 @@ def eliminarUsr(conn, cursor):
     boton.configure(text="Aceptar", command= lambda: eliminarUsuario(conn, cursor, int(entrada.get())))
     boton.grid_configure(column=1, row=1)
 
+def anadirMembrUsr(conn, cursor):
+    textos = ["DNI", "ID membresía", "Duración", None]
+    campos = {}
+
+    ventana = tkinter.Tk()
+
+    marco = tkinter.Frame(ventana)
+    marco.pack()
+
+    titulo = tkinter.Label(marco)
+    titulo.configure(text="Añadir membresía a usuario")
+    titulo.pack()
+
+    marco_campos = tkinter.Frame(marco)
+    marco_campos.pack()
+
+    indice = 0
+    for i in range(2):
+        for j in range(0, 5, 2):
+            if j != 2 and textos[indice] != None:
+                mensaje = f"{textos[indice]}"
+                texto = tkinter.Label(marco_campos)
+                texto.configure(text=f"{mensaje}")
+                texto.grid_configure(column=j, row=i)
+
+                entrada = tkinter.Entry(marco_campos)
+                entrada.grid_configure(column=j+1, row=i)
+
+                campos[mensaje] = entrada
+
+                indice = indice + 1
+            
+            else:
+                separador = tkinter.Label(marco_campos)
+                separador.configure(width=10)
+                separador.grid_configure(column=j, row=i)
+
+    boton = tkinter.Button(marco_campos)
+    boton.configure(text="Aceptar", command= lambda: anadirMembresiaUsuario(conn, cursor, 
+                                                                            int(campos["DNI"].get()),
+                                                                            int(campos["ID"].get()),
+                                                                            int(campos["Duración"].get())))
+
+def anadirMembr(conn, cursor):
+    ventana = tkinter.Tk()
+
+    marco = tkinter.Frame(ventana)
+    marco.pack()
+
+    titulo = tkinter.Label(marco)
+    titulo.configure(text="Añadir membresía nueva")
+    titulo.pack()
+
 def main(conn, cursor):
     tk = tkinter.Tk()
 
@@ -291,21 +347,29 @@ def main(conn, cursor):
     marco_botones = tkinter.Frame(marco_principal)
     marco_botones.pack()
 
-    boton_añadir = tkinter.Button(marco_botones)
-    boton_añadir.configure(text="Añadir usuario", command= lambda: anadirUsr(conn, cursor))
-    boton_añadir.grid_configure(column=0, row=0)
+    boton_anadir_usr = tkinter.Button(marco_botones)
+    boton_anadir_usr.configure(text="Añadir usuario", command= lambda: anadirUsr(conn, cursor))
+    boton_anadir_usr.grid_configure(column=0, row=0)
 
-    boton_consultar = tkinter.Button(marco_botones)
-    boton_consultar.configure(text="Buscar usuario", command= lambda: consultaUsr(cursor))
-    boton_consultar.grid_configure(column=1, row=0)
+    boton_consultar_usr = tkinter.Button(marco_botones)
+    boton_consultar_usr.configure(text="Buscar usuario", command= lambda: consultaUsr(cursor))
+    boton_consultar_usr.grid_configure(column=1, row=0)
 
-    boton_modificar = tkinter.Button(marco_botones)
-    boton_modificar.configure(text="Modificar usuario", command= lambda: modificarUsr(conn, cursor))
-    boton_modificar.grid_configure(column=2, row=0)
+    boton_modificar_usr = tkinter.Button(marco_botones)
+    boton_modificar_usr.configure(text="Modificar usuario", command= lambda: modificarUsr(conn, cursor))
+    boton_modificar_usr.grid_configure(column=2, row=0)
 
-    boton_eliminar = tkinter.Button(marco_botones)
-    boton_eliminar.configure(text="Eliminar usuario", command= lambda: eliminarUsr(conn, cursor))
-    boton_eliminar.grid_configure(column=3, row=0)
+    boton_eliminar_usr = tkinter.Button(marco_botones)
+    boton_eliminar_usr.configure(text="Eliminar usuario", command= lambda: eliminarUsr(conn, cursor))
+    boton_eliminar_usr.grid_configure(column=3, row=0)
+
+    boton_anadir_membr_usr = tkinter.Button(marco_botones)
+    boton_anadir_membr_usr.configure(text="Añadir membresía a usuario", command= lambda: anadirMembrUsr(conn, cursor))
+    boton_anadir_membr_usr.grid_configure(column=1, row=1)
+
+    boton_anadir_membr = tkinter.Button(marco_botones)
+    boton_anadir_membr.configure(text="Añadir membresía", command= lambda: anadirMembr(conn, cursor))
+    boton_anadir_membr.grid_configure(column=0, row=2)
 
     tkinter.mainloop()
 
