@@ -97,6 +97,9 @@ def modificarUsuario(conn, cursor, dni_viejo, dni_nuevo, nombre, direccion, tele
 
     mensaje.pack()
 
+
+
+
 def eliminarUsuario(conn, cursor, dni):
     resultado = usuarios.bajaUsuario(conn, cursor, dni)
 
@@ -370,6 +373,8 @@ def main(conn, cursor):
     boton_anadir_membr = tkinter.Button(marco_botones)
     boton_anadir_membr.configure(text="Añadir membresía", command= lambda: anadirMembr(conn, cursor))
     boton_anadir_membr.grid_configure(column=0, row=2)
+
+
 
     tkinter.mainloop()
 
