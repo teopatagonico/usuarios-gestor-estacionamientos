@@ -8,8 +8,11 @@ except ImportError:
 
 campos = ["DNI", "Nombre", "Dirección", "Teléfono", "Correo", "Membresía", "Vencimiento"]
 
-def numeroValido(numero):
-    return numero > 0 and len(str(numero)) <=8
+def dniValido(dni):
+    return dni > 0 and len(str(dni)) <=8
+
+def duracionValida(duracion):
+    return duracion > 0 and duracion <= 12
 
 def telefonoValido(telefono):
     return len(telefono) == 14 and telefono[0:4] == "+549"
@@ -35,8 +38,11 @@ def correoValido(correo):
 
 def parametroValido(parametro, tipo):
 
-    if tipo == "int":
-        valido = numeroValido(parametro)
+    if tipo == "dni":
+        valido = dniValido(parametro)
+    
+    elif tipo == "duracion":
+        valido = duracionValida(parametro)
 
     elif tipo == "telefono":
         valido = telefonoValido(parametro)
@@ -51,7 +57,7 @@ def parametroValido(parametro, tipo):
 
 def parametrosAltaValidos(dni, nombre, direccion, telefono, correo):
 
-    dni_valido = parametroValido(dni, "int")
+    dni_valido = parametroValido(dni, "dni")
     nombre_valido = parametroValido(nombre, "nombre")
     direccion_valida = parametroValido(direccion, "direccion")
     telefono_valido = parametroValido(telefono, "telefono")
@@ -91,7 +97,7 @@ def existeUsuario(cursor, dni):
 
 def tieneMembresia(cursor, dni):
 
-    if existeUsuario(cursor, dni):
+    if existeUsuario(cursor, dni) == 0:
         sql = f"SELECT * FROM usuarios WHERE dni={dni}"
 
         cursor.execute(sql)
@@ -198,7 +204,7 @@ def anadirMembresia(conn, cursor, dni, id_membresia, duracion):
 
 def renovarMembresia(conn, cursor, dni, duracion):
 
-    if tieneMembresia(cursor, dni) and parametroValido(duracion, "int"):
+    if tieneMembresia(cursor, dni) and parametroValido(duracion, "duracion"):
         meses_30_dias = [4, 6, 9, 11]
         sql = f"SELECT * FROM usuarios WHERE dni={dni}"
 
@@ -224,7 +230,7 @@ def renovarMembresia(conn, cursor, dni, duracion):
             
             tiempo = duracion
             while tiempo >= 12:
-                año_= año + 1
+                año = año + 1
                 tiempo = tiempo - 12
             
             mes = mes + tiempo
